@@ -1,46 +1,21 @@
-import java.util.HashMap;
-import java.util.Map;
+import utils.ConsoleHelper;
+import utils.LocaleManager;
+import service.DataIngestingService;
+import service.DataStorageService;
+
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
-import data.Move;
-import data.Palmon;
-import service.DataIngestingService;
-import service.DataLoadingService;
-import service.DataStorageService;
-import service.DataIngestingService;
-
 public class Main {
-     public static void main(String[] args) {
-        // Instantiate the services
-        DataStorageService dataStorageService = new DataStorageService();
-        DataLoadingService dataLoadingService = new DataLoadingService();
-        DataIngestingService dataIngestingService = new DataIngestingService(dataStorageService, dataLoadingService);
 
-        // Load and store the CSV files
-        CompletableFuture<Void> dataIngestion = dataIngestingService.loadAndStoreCSVFiles();
+    public static void main(String[] args) {
 
-        System.out.println("Welcome to Palmon!");
-
+        CompletableFuture<Void> dataIngestion = DataIngestingService.loadAndStoreCSVFiles();
 
         // Wait for the data ingestion to complete
-        dataIngestion.join();
-        
-        // Example of accessing loaded data
-        int palmonId = 1; // Example ID
-        System.out.println("Palmon with ID " + palmonId + ": " + dataStorageService.getPalmonById(palmonId));
-        
-        Palmon palmon = dataStorageService.getPalmonById(palmonId);
-        Map<Integer, Integer> moves = palmon.getMoves();
-        for (Map.Entry<Integer, Integer> move : moves.entrySet()) {
-            System.out.println("Move ID: " + move.getKey() + ", Learned on level: " + move.getValue());
-            Move moveData = dataStorageService.getMoveById(move.getKey());
-            System.out.println("Move data: " + moveData);
-            System.out.println("Move name: " + moveData.getName());
-        }
+        dataIngestion.join();  // .join() is used here to wait for the async process to complete
 
-        System.out.println("Moves for Palmon with ID " + palmonId + ": " + palmon.getMoves());
-
-        int moveId = 1; // Example ID
-        System.out.println("Move with ID " + moveId + ": " + dataStorageService.getMoveById(moveId));
+        ConsoleHelper.printPalmons(DataStorageService.getPalmons());
     }
 }

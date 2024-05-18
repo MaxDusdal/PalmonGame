@@ -35,6 +35,37 @@ public class Palmon {
     public int getId() {
         return id;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPrimaryType() {
+        return types[0];
+    }
+
+    public String getSecondaryType() {
+        return types[1];
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    @Override
+    public String toString() {
+        return "Palmon{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", primaryType='" + types[0] + '\'' +
+                ", secondaryType='" + types[1] + '\'' +
+                ", level=" + level +
+                '}';
+    }
     // Method to add a move
     public void addMove(int moveId, int learnedOnLevel) {
         moves.put(moveId, learnedOnLevel);

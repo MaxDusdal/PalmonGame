@@ -2,17 +2,19 @@ package service;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The DataIngestingService class provides static methods to load and store CSV data
+ * by coordinating with the DataLoadingService and DataStorageService.
+ */
 public class DataIngestingService {
-    private final DataStorageService dataStorageService;
-    private final DataLoadingService dataLoadingService;
 
-    public DataIngestingService(DataStorageService dataStorageService, DataLoadingService dataLoadingService) {
-        this.dataStorageService = dataStorageService;
-        this.dataLoadingService = dataLoadingService;
-    }
-
-    public CompletableFuture<Void> loadAndStoreCSVFiles() {
-        return DataLoadingService.loadCSVFiles(dataStorageService.getParsers())
-                .thenRun(dataStorageService::assignData);
+    /**
+     * Loads and stores CSV files by utilizing DataLoadingService and DataStorageService.
+     * 
+     * @return a CompletableFuture that completes when the data is loaded and stored
+     */
+    public static CompletableFuture<Void> loadAndStoreCSVFiles() {
+        return DataLoadingService.loadCSVFiles(DataStorageService.getParsers())
+                .thenRun(DataStorageService::assignData);
     }
 }

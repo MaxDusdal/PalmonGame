@@ -1,11 +1,29 @@
 package utils;
 
+/**
+ * The StringNormalizer class provides utility methods for normalizing and formatting strings.
+ * It includes methods for capitalizing the first letter of a string and formatting names.
+ */
 public class StringNormalizer {
-     public static String capitalizeFirst(String word) {
+
+    /**
+     * Capitalizes the first letter of the given word.
+     * 
+     * @param word the word to capitalize
+     * @return the word with its first letter capitalized, or the original word if it is null or empty
+     */
+    public static String capitalizeFirst(String word) {
         if (word == null || word.isEmpty()) return word;
         return Character.toUpperCase(word.charAt(0)) + word.substring(1);
     }
 
+    /**
+     * Normalizes the given name by capitalizing the first letter of each word.
+     * It also replaces hyphens with spaces and ensures each word is properly capitalized.
+     * 
+     * @param name the name to normalize
+     * @return the normalized name with each word capitalized
+     */
     public static String name(String name) {
         String temp = capitalizeFirst(name.toLowerCase().replace("-", " "));
         if (temp.contains(" ")) {

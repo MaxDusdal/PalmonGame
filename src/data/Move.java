@@ -1,5 +1,4 @@
 package data;
-
 public class Move {
     public final int id;
     

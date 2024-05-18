@@ -1,4 +1,4 @@
-package utils;
+package utils.DataHandling;
 
 /**
  * The StringNormalizer class provides utility methods for normalizing and formatting strings.

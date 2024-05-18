@@ -1,21 +1,34 @@
-import utils.ConsoleHelper;
-import utils.LocaleManager;
+import data.Palmon;
 import service.DataIngestingService;
-import service.DataStorageService;
+import utils.LocaleManager;
+import utils.TeamManager;
+import utils.ConsoleHelpers.TableCreator;
 
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class Main {
 
     public static void main(String[] args) {
-
+        // Load and store CSV files asynchronously
         CompletableFuture<Void> dataIngestion = DataIngestingService.loadAndStoreCSVFiles();
+        
+        // Initialize LocaleManager for language support
+        LocaleManager.getLocaleFromUser();
 
-        // Wait for the data ingestion to complete
-        dataIngestion.join();  // .join() is used here to wait for the async process to complete
+        dataIngestion.join();  // Wait for the async process to complete
+        System.out.println(LocaleManager.getMessage("loading_completed", "Palmon"));
 
-        ConsoleHelper.printPalmons(DataStorageService.getPalmons());
+        // Create user team
+        List<Palmon> userTeam = TeamManager.createUserTeam();
+
+        // Generate opponent team
+        List<Palmon> opponentTeam = TeamManager.createOpponentTeam();
+
+        // Display teams
+        System.out.println("\nYour Team:");
+        TableCreator.printPalmons(userTeam);
+        System.out.println("\nOpponent Team:");
+        TableCreator.printPalmons(opponentTeam);
     }
 }

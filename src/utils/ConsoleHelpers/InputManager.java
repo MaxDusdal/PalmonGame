@@ -1,22 +1,15 @@
-package utils;
+package utils.ConsoleHelpers;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
-/**
- * The InputManager class provides static methods for handling user input in the console.
- * It includes methods for selecting options, inputting strings, and inputting integers with validation.
- */
+import utils.LocaleManager;
+
 public class InputManager {
     private static final Scanner scanner = new Scanner(System.in);
 
-    /**
-     * Prompts the user to select an option from the provided options and returns the selected key.
-     * 
-     * @param prompt the prompt message to display to the user
-     * @param options a map of option keys and their corresponding descriptions
-     * @return the key of the selected option
-     */
     public static String select(String prompt, Map<String, String> options) {
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
@@ -35,12 +28,24 @@ public class InputManager {
         return selection;
     }
 
-    /**
-     * Prompts the user to enter a string value and returns the input.
-     * 
-     * @param prompt the prompt message to display to the user
-     * @return the input string from the user
-     */
+    public static int selectWithNumbers(String prompt, Map<Integer, String> options) {
+        System.out.println("\n\n" + prompt);
+        System.out.println("=".repeat(prompt.length()));
+        
+        options.forEach((key, value) -> System.out.printf("  %-10s : %s%n", key, value)); 
+        System.out.println("=".repeat(prompt.length())); 
+        
+        System.out.print(LocaleManager.getMessage("INPUT_SELECT_CHOICE"));
+        int selection = inputInt("Enter your choice: ");
+        
+        while (!options.containsKey(selection)) {
+            System.out.print(LocaleManager.getMessage("INPUT_INVALID_CHOICE", options.keySet().toString()));
+            selection = inputInt("Enter your choice: ");
+        }
+        
+        return selection;
+    }
+
     public static String input(String prompt) {
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
@@ -48,13 +53,6 @@ public class InputManager {
         return scanner.nextLine().trim();
     }
 
-    /**
-     * Prompts the user to enter an integer value and returns the input.
-     * Validates that the input is an integer.
-     * 
-     * @param prompt the prompt message to display to the user
-     * @return the input integer from the user
-     */
     public static int inputInt(String prompt) {
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
@@ -66,6 +64,22 @@ public class InputManager {
         int value = scanner.nextInt();
         scanner.nextLine(); // consume the newline character
         return value;
+    }
+
+    public static ArrayList<Integer> inputIntArray(String prompt) {
+        System.out.println("\n\n" + prompt);
+        System.out.println("=".repeat(prompt.length()));
+        System.out.print(LocaleManager.getMessage("INPUT_ENTER_VALUE"));
+        String[] values = scanner.nextLine().split(",");
+        ArrayList<Integer> intValues = new ArrayList<>();
+        for (String value : values) {
+            try {
+                intValues.add(Integer.parseInt(value.trim()));
+            } catch (NumberFormatException e) {
+                System.out.println(LocaleManager.getMessage("INPUT_INVALID_VALUE"));
+            }
+        }
+        return intValues;
     }
 
     /**

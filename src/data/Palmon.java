@@ -1,8 +1,9 @@
 package data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import utils.ConsoleHelpers.TableCreator;
 
 public class Palmon {
     public final int id;
@@ -17,9 +18,9 @@ public class Palmon {
     private int level = 100;
     public static final int maxMoves = 4;
     private Map<Integer, Integer> moves = new HashMap<>();
-    
+
     public Palmon(int id, String name, int height, int weight, String type1, String type2,
-    int hp, int attack, int defense, int speed) {
+                  int hp, int attack, int defense, int speed) {
         this.id = id;
         this.name = name;
         this.height = height;
@@ -31,7 +32,7 @@ public class Palmon {
         this.defense = defense;
         this.speed = speed;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -56,16 +57,30 @@ public class Palmon {
         this.level = level;
     }
 
-    @Override
-    public String toString() {
-        return "Palmon{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", primaryType='" + types[0] + '\'' +
-                ", secondaryType='" + types[1] + '\'' +
-                ", level=" + level +
-                '}';
+    public int getHeight() {
+        return height;
     }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+    
     // Method to add a move
     public void addMove(int moveId, int learnedOnLevel) {
         moves.put(moveId, learnedOnLevel);
@@ -76,5 +91,8 @@ public class Palmon {
         return moves;
     }
 
+    // Display method to print Palmon details
+    public void display() {
+        TableCreator.printPalmon(this);
+    }
 }
-

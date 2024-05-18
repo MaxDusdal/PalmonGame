@@ -1,7 +1,7 @@
 package service;
 
-import utils.CSVReader;
-import utils.DataParser;
+import utils.DataHandling.CSVReader;
+import utils.DataHandling.DataParser;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

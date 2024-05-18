@@ -55,7 +55,7 @@ public class DataStorageService {
         associateMovesWithPalmons();
     }
 
-    private static Map<String, DataParser> getParsers() {
+    public static Map<String, DataParser> getParsers() {
         Map<String, DataParser> parsers = new HashMap<>();
         parsers.put("palmon", palmonParser);
         parsers.put("moves", moveParser);

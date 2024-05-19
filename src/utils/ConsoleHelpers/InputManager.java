@@ -1,6 +1,5 @@
 package utils.ConsoleHelpers;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Map;

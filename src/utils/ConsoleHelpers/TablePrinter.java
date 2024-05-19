@@ -8,6 +8,11 @@ public class TablePrinter {
     private final List<List<String>> rows;
     private final int[] columnWidths;
 
+    /**
+     * Creates a new TablePrinter with the given headers.
+     * 
+     * @param headers the headers of the table
+     */
     public TablePrinter(List<String> headers) {
         this.headers = headers;
         this.rows = new ArrayList<>();
@@ -16,6 +21,12 @@ public class TablePrinter {
             columnWidths[i] = headers.get(i).length();
         }
     }
+    
+    /**
+     * Adds a row to the table.
+     * 
+     * @param row the row to add
+     */
     public void addRow(List<String> row) {
         if (row.size() != headers.size()) {
             throw new IllegalArgumentException("Row size does not match header size");
@@ -27,7 +38,10 @@ public class TablePrinter {
             }
         }
     }
-
+    
+    /**
+     * Prints the table to the console.
+     */
     public void print() {
         printLine();
         printRow(headers);
@@ -38,6 +52,9 @@ public class TablePrinter {
         printLine();
     }
 
+    /**
+     * Prints a line to the console. This is used to separate the table header, rows, and footer.
+     */
     private void printLine() {
         for (int width : columnWidths) {
             System.out.print("+");
@@ -46,9 +63,14 @@ public class TablePrinter {
         System.out.println("+");
     }
 
+    /**
+     * Prints a row to the console.
+     * 
+     * @param row the row to print
+     */
     private void printRow(List<String> row) {
         for (int i = 0; i < row.size(); i++) {
-            System.out.printf("| %-"+columnWidths[i]+"s ", row.get(i));
+            System.out.printf("| %-" + columnWidths[i] + "s ", row.get(i));
         }
         System.out.println("|");
     }

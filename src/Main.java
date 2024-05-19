@@ -14,11 +14,10 @@ import java.util.concurrent.CompletableFuture;
 public class Main {
 
     public static void main(String[] args) {
+        // Initialize LocaleManager for language support, defaults to English
+        LocaleManager.initialize();
         // Load and store CSV files asynchronously
         CompletableFuture<Void> dataIngestion = DataIngestingService.loadAndStoreCSVFiles();
-        
-        // Initialize LocaleManager for language support
-        LocaleManager.getLocaleFromUser();
 
         dataIngestion.join();  // Wait for the async process to complete
         System.out.println(LocaleManager.getMessage("loading_completed", "Palmon"));

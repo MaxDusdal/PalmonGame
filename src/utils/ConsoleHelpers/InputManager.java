@@ -1,113 +1,222 @@
 package utils.ConsoleHelpers;
 
-import java.lang.reflect.Array;
+import java.io.Console;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
-
 import utils.LocaleManager;
 
 public class InputManager {
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static String select(String prompt, Map<String, String> options) {
+    /**
+     * Prompts the user to select an option from a list of options.
+     * 
+     * @param prompt  the message to display to the user
+     * @param options a map of options where the key is the value and the value is
+     *                the option/description
+     * @return the key of the selected option
+     */
+    public static String Select(String prompt, Map<String, String> options) {
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
-        
-        options.forEach((key, value) -> System.out.printf("  %-10s : %s%n", key, value)); 
-        System.out.println("=".repeat(prompt.length())); 
-        
-        System.out.print(LocaleManager.getMessage("INPUT_SELECT_CHOICE"));
+
+        options.forEach((key, value) -> System.out.printf("  %-10s : %s%n", key, value));
+        System.out.println("=".repeat(prompt.length()));
+
+        System.out.print(LocaleManager.getMessage("INPUT_SELECT_ENTER"));
         String selection = scanner.nextLine().trim();
-        
+
         while (!options.containsKey(selection)) {
-            System.out.print(LocaleManager.getMessage("INPUT_INVALID_CHOICE", options.keySet().toString()));
+            System.out.print(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
             selection = scanner.nextLine().trim();
         }
-        
+
         return selection;
-    }
-
-    public static int selectWithNumbers(String prompt, Map<Integer, String> options) {
-        System.out.println("\n\n" + prompt);
-        System.out.println("=".repeat(prompt.length()));
-        
-        options.forEach((key, value) -> System.out.printf("  %-10s : %s%n", key, value)); 
-        System.out.println("=".repeat(prompt.length())); 
-        
-        System.out.print(LocaleManager.getMessage("INPUT_SELECT_CHOICE"));
-        int selection = inputInt("Enter your choice: ");
-        
-        while (!options.containsKey(selection)) {
-            System.out.print(LocaleManager.getMessage("INPUT_INVALID_CHOICE", options.keySet().toString()));
-            selection = inputInt("Enter your choice: ");
-        }
-        
-        return selection;
-    }
-
-    public static String input(String prompt) {
-        System.out.println("\n\n" + prompt);
-        System.out.println("=".repeat(prompt.length()));
-        System.out.print(LocaleManager.getMessage("INPUT_ENTER_VALUE"));
-        return scanner.nextLine().trim();
-    }
-
-    public static int inputInt(String prompt) {
-        System.out.println("\n\n" + prompt);
-        System.out.println("=".repeat(prompt.length()));
-        System.out.print(LocaleManager.getMessage("INPUT_ENTER_VALUE"));
-        while (!scanner.hasNextInt()) {
-            System.out.print(LocaleManager.getMessage("INPUT_INVALID_VALUE"));
-            scanner.next();
-        }
-        int value = scanner.nextInt();
-        scanner.nextLine(); // consume the newline character
-        return value;
-    }
-
-    public static ArrayList<Integer> inputIntArray(String prompt) {
-        System.out.println("\n\n" + prompt);
-        System.out.println("=".repeat(prompt.length()));
-        System.out.print(LocaleManager.getMessage("INPUT_ENTER_VALUE"));
-        String[] values = scanner.nextLine().split(",");
-        ArrayList<Integer> intValues = new ArrayList<>();
-        for (String value : values) {
-            try {
-                intValues.add(Integer.parseInt(value.trim()));
-            } catch (NumberFormatException e) {
-                System.out.println(LocaleManager.getMessage("INPUT_INVALID_VALUE"));
-            }
-        }
-        return intValues;
     }
 
     /**
-     * Prompts the user to enter an integer value within the specified range and returns the input.
-     * Validates that the input is an integer within the specified range.
+     * Prompts the user to select an option from a list of options.
      * 
-     * @param prompt the prompt message to display to the user
-     * @param min the minimum acceptable value (inclusive)
-     * @param max the maximum acceptable value (inclusive)
-     * @return the input integer from the user within the specified range
+     * @param prompt  the message to display to the user
+     * @param options a map of options where the key is the index and the value is
+     *                the option/description
+     * @return the key of the selected option
      */
-    public static int inputRange(String prompt, int min, int max) {
+    // TODO: Maybe switch to LinkedHashMap to prevent reordering of the options
+    public static Integer SelectWithIndex(String prompt, Map<Integer, String> options) {
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
-        System.out.print(LocaleManager.getMessage("INPUT_ENTER_VALUE"));
-        int value;
-        while (true) {
-            while (!scanner.hasNextInt()) {
-                System.out.print(LocaleManager.getMessage("INPUT_INVALID_VALUE"));
-                scanner.next();
-            }
-            value = scanner.nextInt();
-            if (value >= min && value <= max) {
-                break;
-            }
-            System.out.print(LocaleManager.getMessage("INPUT_OUT_OF_RANGE", min, max));
+
+        options.forEach((key, value) -> System.out.printf("  %d : %s%n", key, value));
+        System.out.println("=".repeat(prompt.length()));
+
+        System.out.print(LocaleManager.getMessage("INPUT_SELECT_ENTER"));
+        int selection = 0;
+
+        try {
+            selection = scanner.nextInt();
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println(ConsoleColors.colorizeAndBold(
+                    LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
+            scanner.nextLine(); // Clear the buffer
+            return SelectWithIndex(prompt, options);
         }
-        scanner.nextLine(); // consume the newline character
-        return value;
+
+        while (!options.containsKey(selection)) {
+            System.out.print(ConsoleColors.colorizeAndBold(
+                    LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
+            selection = scanner.nextInt();
+            scanner.nextLine();
+        }
+
+        return selection;
+    }
+
+    /**
+     * Prompts the user for a string input.
+     * 
+     * @param prompt the message to display to the user
+     * @return a string input by the user
+     */
+
+    public static String String(String prompt) {
+        System.out.println("\n\n" + prompt);
+        System.out.println("=".repeat(prompt.length()));
+        System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
+        return scanner.nextLine().trim();
+    }
+
+    /**
+     * Prompts the user for an integer input.
+     * Uses recursion to prompt the user again if the input is not an integer.
+     * 
+     * @param prompt the message to display to the user
+     * @return an integer input by the user
+     */
+    public static int Integer(String prompt) {
+        System.out.println("\n\n" + prompt);
+        System.out.println("=".repeat(prompt.length()));
+        System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
+        try {
+            int input = scanner.nextInt();
+            scanner.nextLine();
+            return input;
+        } catch (Exception e) {
+            System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
+            scanner.nextLine(); // Clear the buffer
+            return Integer(prompt);
+        }
+    }
+
+    /**
+     * Prompts the user for an integer input within a specified range.
+     * Uses recursion to prompt the user again if the input is out of range.
+     * 
+     * @param prompt        the message to display to the user
+     * @param lowerBoundary the lower boundary of the range (inclusive)£
+     * @param upperBoundary the upper boundary of the range (inclusive)
+     * @return a CompletableFuture that completes when the data is loaded and stored
+     */
+    public static int Integer(String prompt, Integer lowerBoundary, Integer upperBoundary) {
+        Integer input = Integer(prompt);
+
+        while (input < lowerBoundary || input > upperBoundary) {
+            System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
+            input = Integer(prompt);
+        }
+
+        return input;
+    }
+
+    /**
+     * Prompts the user for a comma-separated list of integers.
+     * Uses recursion to prompt the user again if the input is invalid.
+     * 
+     * @param prompt the message to display to the user
+     * @returns a list of integers input by the user
+     */
+    public static ArrayList<Integer> IntegerArray(String prompt) {
+        System.out.println("\n\n" + prompt);
+        System.out.println("=".repeat(prompt.length()));
+        System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
+        String input = scanner.nextLine().trim();
+
+        // Check for empty input
+        if (input.isEmpty()) {
+            System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_EMPTY"), "red"));
+
+            return IntegerArray(prompt);
+        }
+
+        String[] inputArray = input.split(",");
+        ArrayList<Integer> intList = new ArrayList<>();
+
+        try {
+            for (String s : inputArray) {
+                // Check for empty values within the array
+                if (s.trim().isEmpty()) {
+                    System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
+                    return IntegerArray(prompt);
+                }
+                intList.add(Integer.parseInt(s.trim()));
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
+
+            return IntegerArray(prompt);
+        }
+
+        return intList;
+    }
+
+    /**
+     * Prompts the user for a comma-separated list of integers within a specified
+     * range.
+     * Uses recursion to prompt the user again if the input is invalid or out of
+     * range.
+     * 
+     * @param prompt        the message to display to the user
+     * @param lowerBoundary the lower boundary of the range (inclusive)
+     * @param upperBoundary the upper boundary of the range (inclusive)
+     * @returns a list of integers input by the user
+     */
+    public static ArrayList<Integer> IntegerArray(String prompt, Integer lowerBoundary, Integer upperBoundary) {
+        ArrayList<Integer> input = IntegerArray(prompt);
+
+        for (Integer i : input) {
+            if (i < lowerBoundary || i > upperBoundary) {
+                System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
+                return IntegerArray(prompt, lowerBoundary, upperBoundary);
+            }
+        }
+
+        return input;
+    }
+
+    /**
+     * Prompts the user for a comma-separated list of integers within a specified
+     * list of valid values.
+     * Uses recursion to prompt the user again if the input is invalid or not in the
+     * list of valid values.
+     * 
+     * @param prompt      the message to display to the user
+     * @param validValues an ArrayList of valid values
+     * @returns a list of integers input by the user
+     */
+
+    public static ArrayList<Integer> IntegerArray(String prompt, ArrayList<Integer> validValues) {
+        ArrayList<Integer> input = IntegerArray(prompt);
+
+        for (Integer i : input) {
+            if (!validValues.contains(i)) {
+                System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_NOT_IN_LIST"),"red"));
+                return IntegerArray(prompt, validValues);
+            }
+        }
+
+        return input;
     }
 }

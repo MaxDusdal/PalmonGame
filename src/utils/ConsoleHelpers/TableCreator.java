@@ -7,17 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * The ConsoleHelper class provides utility methods for printing data to the console.
- * It includes methods for printing lists of Palmons in a tabular format.
- */
 public class TableCreator {
 
-    /**
-     * Prints a list of Palmons in a tabular format to the console.
-     * 
-     * @param palmons the list of Palmons to be printed
-     */
     public static void printPalmons(List<Palmon> palmons) {
         List<String> headers = Stream.of("ID", "Name", "Primary Type", "Secondary Type", "Height", "Weight", "HP", "Attack", "Defense", "Speed")
                                      .collect(Collectors.toList());
@@ -41,11 +32,6 @@ public class TableCreator {
         tablePrinter.print();
     }
 
-    /**
-     * Prints the details of a single Palmon in a tabular format.
-     *
-     * @param palmon the Palmon to be printed
-     */
     public static void printPalmon(Palmon palmon) {
         List<String> headers = Stream.of("ID", "Name", "Primary Type", "Secondary Type", "Height", "Weight", "HP", "Attack", "Defense", "Speed")
                                      .collect(Collectors.toList());

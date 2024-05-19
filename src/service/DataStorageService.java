@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataStorageService {
     private static ArrayList<Palmon> palmons = new ArrayList<>();
+    private static ArrayList<Integer> palmonIds = new ArrayList<>();
     private static CopyOnWriteArrayList<Move> moves = new CopyOnWriteArrayList<>();
     private static Map<Integer, Map<Integer, Integer>> palmonMoves = new ConcurrentHashMap<>();
     private static HashMap<String, HashMap<String, Float>> effectivity = new HashMap<>();
@@ -34,6 +35,10 @@ public class DataStorageService {
         return palmons;
     }
 
+    public static ArrayList<Integer> getPalmonIds() {
+        return palmonIds;
+    }
+
     public static CopyOnWriteArrayList<Move> getMoves() {
         return moves;
     }
@@ -46,12 +51,19 @@ public class DataStorageService {
         return effectivity;
     }
 
+    private static void extractPalmonIds() {
+        for (Palmon palmon : palmons) {
+            palmonIds.add(palmon.getId());
+        }
+    }
+
     public static void assignData() {
         palmons = palmonParser.getData();
         moves = moveParser.getData();
         palmonMoves = palmonMoveParser.getData();
         effectivity = effectivityParser.getData();
 
+        extractPalmonIds();
         associateMovesWithPalmons();
     }
 
@@ -64,20 +76,17 @@ public class DataStorageService {
         return parsers;
     }
 
-    public static void associateMovesWithPalmons() {
-        // Map for fast lookup of Palmons by their ID
+    private static void associateMovesWithPalmons() {
         Map<Integer, Palmon> palmonMap = new HashMap<>();
         for (Palmon palmon : palmons) {
             palmonMap.put(palmon.getId(), palmon);
         }
 
-        // Map for fast lookup of Moves by their ID
         Map<Integer, Move> moveMap = new HashMap<>();
         for (Move move : moves) {
             moveMap.put(move.getId(), move);
         }
 
-        // Iterate through the palmonMoves map to associate Moves with Palmons
         for (Map.Entry<Integer, Map<Integer, Integer>> palmonEntry : palmonMoves.entrySet()) {
             int palmonId = palmonEntry.getKey();
             Palmon palmon = palmonMap.get(palmonId);
@@ -90,7 +99,7 @@ public class DataStorageService {
                     Move move = moveMap.get(moveId);
 
                     if (move != null) {
-                        palmon.addMove(moveId, learnedOnLevel); // Use moveId and learnedOnLevel
+                        palmon.addMove(moveId, learnedOnLevel);
                     }
                 }
             }

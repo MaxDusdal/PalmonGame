@@ -9,18 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * The DataLoadingService class provides static methods for loading CSV files
- * asynchronously using specified parsers.
- */
 public class DataLoadingService {
-
-    /**
-     * Loads CSV files asynchronously using the provided parsers.
-     * 
-     * @param parsers a map of parser names to their corresponding DataParser instances
-     * @return a CompletableFuture that completes when all files are loaded
-     */
     public static CompletableFuture<Void> loadCSVFiles(Map<String, DataParser> parsers) {
         return CompletableFuture.runAsync(() -> {
             ExecutorService executor = Executors.newFixedThreadPool(parsers.size());

@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.xml.crypto.Data;
-
 /**
  * The TeamBuilder class is responsible for creating teams for the user and the
  * opponent.
@@ -30,11 +28,16 @@ public class TeamBuilder {
      *          Time Complexity: O(n) where n is the number of Palmons available.
      */
     public static Team createUserTeam() {
+        int teamSize = 0;
         int choice = InputManager.SelectWithIndex("TEAM_ASSEMBLE_METHOD_QUESTION",
                 Map.of(1, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_RANDOM"),
                         2, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_ID"),
                         3, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_TYPE")));
-        int teamSize = getTeamSize();
+
+        if (choice != 2) {
+            teamSize = getTeamSize();
+
+        }
 
         switch (choice) {
             case 1:

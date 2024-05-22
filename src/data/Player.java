@@ -65,9 +65,9 @@ public class Player {
      * Time Complexity: O(1)
      */
     public static void initializeNames() {
-        userName = InputManager.String("PLAYER_NAME_QUESTION");
+        userName = InputManager.String("PLAYER_NAME_QUESTION", 1, 100);
         userName = StringNormalizer.name(userName);
-        opponentName = InputManager.String("PLAYER_ENEMY_NAME_QUESTION");
+        opponentName = InputManager.String("PLAYER_ENEMY_NAME_QUESTION", 1, 100);
         opponentName = StringNormalizer.name(opponentName);
     }
 

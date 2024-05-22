@@ -34,13 +34,11 @@ public class Battle {
             System.out.println();
             System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS", Player.getOpponentName()), "red"));
             System.out.println("I've failed over and over and over again in my life. And that is why I succeed. - Michael Jordan");
-            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS", Player.getOpponentName()));
         } else {
             System.out.println();
             System.out.println();
             System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS", Player.getUserName()), "green"));
             TableCreator.printTeam(playerTeam);
-            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS", Player.getUserName()));
 
         }
     }

@@ -98,6 +98,26 @@ public class InputManager {
     }
 
     /**
+     * Uses recursion to prompt the user for a string input within a specified range.
+     * 
+     * @param promptKey the message to display to the user
+     * @param minChars the minimum number of characters
+     * @param maxChars the maximum number of characters
+     * @return a string input by the user
+     */
+    public static String String(String promptKey, Integer minChars, Integer maxChars) {
+        String input = String(promptKey);
+
+        while (input.length() < minChars || input.length() > maxChars) {
+            System.out.println(ConsoleColors.colorizeAndBold(
+                    LocaleManager.getMessage("INPUT_STRING_LENGTH", minChars, maxChars), "red"));
+            input = String(promptKey);
+        }
+
+        return input;
+    }
+
+    /**
      * Prompts the user for a comma-separated list of strings.
      * Time Complexity: O(n) where n is the number of input strings
      * 

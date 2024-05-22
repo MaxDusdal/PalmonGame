@@ -1,5 +1,6 @@
     package data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 import service.DataStorageService;
 import utils.ConsoleHelpers.TableCreator;
 
-public class Palmon {
+public class Palmon implements Serializable {
     public final int id;
     public final String name;
     private final int height;
@@ -38,6 +39,25 @@ public class Palmon {
         this.attack = attack;
         this.defense = defense;
         this.speed = speed;
+    }
+
+    @Override
+    public String toString() {
+        return "Palmon{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", primaryType='" + types[0] + '\'' +
+                ", secondaryType='" + types[1] + '\'' +
+                ", level=" + level +
+                ", height=" + height +
+                ", weight=" + weight +
+                ", hp=" + hp +
+                ", attack=" + attack +
+                ", defense=" + defense +
+                ", speed=" + speed +
+                ", defeated=" + isDefeated +
+                ", moves=" + moves +
+                '}';
     }
 
     public int getId() {

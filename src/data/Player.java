@@ -1,5 +1,6 @@
 package data;
 
+import utils.LocaleManager;
 import utils.ConsoleHelpers.InputManager;
 import utils.DataHandling.StringNormalizer;
 
@@ -142,7 +143,7 @@ public class Player {
     public static void initializeOrLoadProfile() {
         if (Files.exists(Paths.get(PROFILE_FILE))) {
             int choice = InputManager.SelectWithIndex("PROFILE_LOADING_QUESTION",
-                    Map.of(1, "Load Profile " + getProfileInfo(), 2, "New Profile"));
+                    Map.of(1, LocaleManager.getMessage("PLAYER_SELECT_LOAD") + getProfileInfo(), 2, LocaleManager.getMessage("PLAYER_SELECT_CREATE")));
             if (choice == 1) {
                 if (loadProfile()) {
                     return;

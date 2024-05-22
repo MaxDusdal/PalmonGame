@@ -30,11 +30,18 @@ public class Battle {
         }
 
         if (isTeamDefeated(playerTeam)) {
+            System.out.println();
+            System.out.println();
             System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS", Player.getOpponentName()), "red"));
+            System.out.println("I've failed over and over and over again in my life. And that is why I succeed. - Michael Jordan");
             BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS", Player.getOpponentName()));
         } else {
+            System.out.println();
+            System.out.println();
             System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS", Player.getUserName()), "green"));
+            TableCreator.printTeam(playerTeam);
             BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS", Player.getUserName()));
+
         }
     }
 
@@ -55,7 +62,7 @@ public class Battle {
 
         while (!playerTeam.isDefeated() && !opponentTeam.isDefeated()) {
             while (!playerPalmon.isDefeated() && !opponentPalmon.isDefeated()) {
-                printBattleStatus();
+                System.out.println();
                 System.out.println(ConsoleColors.colorizeAndBold("\n" + LocaleManager.getMessage("BATTLE_ROUND", round++), "cyan"));
                 System.out.println(ConsoleColors.colorize(playerPalmon.getName(), "blue") + " vs. " + ConsoleColors.colorize(opponentPalmon.getName(), "red"));
                 sleep(1000); // Add a delay before the attack sequence
@@ -121,9 +128,24 @@ public class Battle {
      * Time Complexity: O(1)
      */
     private void attack(Palmon attacker, Palmon defender) {
+        boolean waitForMove = true;
+        int moveChoice = 0;
+
+        System.out.println();
+        System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_YOUR_MOVE", Player.getUserName()), "green"));
+
         checkForMaxUsages(attacker);
-        TableCreator.printPalmonFightMoves(attacker);
-        int moveChoice = InputManager.Integer(LocaleManager.getMessage("BATTLE_CHOOSE_MOVE"), 1, attacker.getFightMoves().size());
+        while (waitForMove) {
+            TableCreator.printPalmonFightMoves(attacker);
+            moveChoice = InputManager.Integer("BATTLE_CHOOSE_MOVE", 0, attacker.getFightMoves().size());
+            if (moveChoice == 0) {
+                printBattleStatus(playerTeam, opponentTeam);
+                InputManager.EnterToContinue();
+            } else {
+                waitForMove = false;
+            }
+        }
+
         Move chosenMove = attacker.getFightMoves().get(moveChoice - 1);
         System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_USED", attacker.getName(), chosenMove.getName()), "magenta"));
         sleep(1000); // Add a delay before showing the move effect
@@ -156,6 +178,8 @@ public class Battle {
      * Time Complexity: O(1)
      */
     private void attackByOpponent(Palmon attacker, Palmon defender) {
+        System.out.println();
+        System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_YOUR_MOVE", Player.getOpponentName()), "red"));
         checkForMaxUsages(attacker);
         int moveChoice = (int) (Math.random() * attacker.getFightMoves().size());
         Move chosenMove = attacker.getFightMoves().get(moveChoice);
@@ -207,7 +231,7 @@ public class Battle {
      * The status includes the name, health, and status of each Palmon in the team.
      * Time Complexity: O(n)
      */
-    private void printBattleStatus() {
+    public static void printBattleStatus(Team playerTeam, Team opponentTeam) {
         System.out.println();
         System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("BATTLE_STATUS"), "cyan"));
         System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_TEAM_STATUS", Player.getUserName()), "green"));

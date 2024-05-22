@@ -10,8 +10,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javax.xml.crypto.Data;
+
 /**
- * The TeamBuilder class is responsible for creating teams for the user and the opponent.
+ * The TeamBuilder class is responsible for creating teams for the user and the
+ * opponent.
  */
 public class TeamBuilder {
     private static final List<Palmon> availablePalmons = DataStorageService.getPalmons();
@@ -20,27 +23,28 @@ public class TeamBuilder {
     private static boolean customLevelRangeAsked = false;
 
     /**
-     * Creates a team for the user. The user can choose to create a team randomly, by ID, or by type.
+     * Creates a team for the user. The user can choose to create a team randomly,
+     * by ID, or by type.
      * 
      * @returns the user's team
-     * Time Complexity: O(n) where n is the number of Palmons available.
+     *          Time Complexity: O(n) where n is the number of Palmons available.
      */
     public static Team createUserTeam() {
-        int choice = InputManager.SelectWithIndex(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_QUESTION"),
+        int choice = InputManager.SelectWithIndex("TEAM_ASSEMBLE_METHOD_QUESTION",
                 Map.of(1, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_RANDOM"),
-                       2, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_ID"),
-                       3, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_TYPE")));
+                        2, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_ID"),
+                        3, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_TYPE")));
         int teamSize = getTeamSize();
 
         switch (choice) {
             case 1:
                 return buildRandomTeam(teamSize);
             case 2:
-                List<Integer> idList = InputManager.IntegerArray(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_ID_QUESTION"),
+                List<Integer> idList = InputManager.IntegerArray("TEAM_ASSEMBLE_METHOD_ID_QUESTION",
                         DataStorageService.getPalmonIds());
                 return buildTeamById(idList);
             case 3:
-                List<String> types = InputManager.StringArray(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_TYPE_QUESTION"),
+                List<String> types = InputManager.StringArray("TEAM_ASSEMBLE_METHOD_TYPE_QUESTION",
                         DataStorageService.getPalmonTypes());
                 return buildTeamByType(types, teamSize);
             default:
@@ -50,13 +54,14 @@ public class TeamBuilder {
     }
 
     /**
-     * Creates a team for the opponent. The user can choose to create a team randomly or by specifying the size.
+     * Creates a team for the opponent. The user can choose to create a team
+     * randomly or by specifying the size.
      * 
      * @return the opponent's team
-     * Time Complexity: O(n) where n is the number of Palmons available.
+     *         Time Complexity: O(n) where n is the number of Palmons available.
      */
     public static Team createOpponentTeam() {
-        int opponentTeamSize = InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_AMOUNT_ENEMY"), 0, 100);
+        int opponentTeamSize = InputManager.Integer("TEAM_ASSEMBLE_AMOUNT_ENEMY", 0, 100);
         if (opponentTeamSize == 0) {
             opponentTeamSize = new Random().nextInt(6) + 1; // Random team size between 1 and 6
         }
@@ -68,9 +73,10 @@ public class TeamBuilder {
 
     /**
      * Builds a random team of the specified size.
+     * 
      * @param size the size of the team
      * @return the team
-     * Time Complexity: O(k) where k is the size of the team.
+     *         Time Complexity: O(k) where k is the size of the team.
      */
     private static Team buildRandomTeam(int size) {
         Team team = new Team();
@@ -89,7 +95,7 @@ public class TeamBuilder {
      * 
      * @param ids the IDs of the Palmons
      * @return the team
-     * Time Complexity: O(k) where k is the number of IDs provided.
+     *         Time Complexity: O(k) where k is the number of IDs provided.
      */
     private static Team buildTeamById(List<Integer> ids) {
         Team team = new Team();
@@ -108,9 +114,10 @@ public class TeamBuilder {
      * Builds a team by the specified types.
      * 
      * @param types the types of the Palmons
-     * @param size the size of the team
+     * @param size  the size of the team
      * @return the team
-     * Time Complexity: O(n * k) where n is the number of Palmons available and k is the size of the team.
+     *         Time Complexity: O(n * k) where n is the number of Palmons available
+     *         and k is the size of the team.
      */
     private static Team buildTeamByType(List<String> types, int size) {
         Team team = new Team();
@@ -130,17 +137,18 @@ public class TeamBuilder {
      * Gets the size of the team from the user.
      * 
      * @return the size of the team
-     * Time Complexity: O(1) for prompting the user.
+     *         Time Complexity: O(1) for prompting the user.
      */
     private static int getTeamSize() {
-        return InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_AMOUNT_USER"), 1, 100);
+        return InputManager.Integer("TEAM_ASSEMBLE_AMOUNT_USER", 1, 100);
     }
 
     /**
      * Sets the levels of the Palmons in the team.
      * 
      * @param team the team
-     * Time Complexity: O(k) where k is the number of Palmons in the team.
+     *             Time Complexity: O(k) where k is the number of Palmons in the
+     *             team.
      */
     private static void setPalmonLevels(Team team) {
         if (shouldSetCustomLevelRange()) {
@@ -157,26 +165,30 @@ public class TeamBuilder {
 
     /**
      * Gets the level range for the Palmons in the team.
+     * 
      * @return the minimum and maximum levels
-     * Time Complexity: O(1) for prompting the user.
+     *         Time Complexity: O(1) for prompting the user.
      */
     private static ArrayList<Integer> getPalmonLevels() {
-        int min = InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_MIN_QUESTION"), 1, 100);
-        int max = InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_MAX_QUESTION"), min, 100);
+        int min = InputManager.Integer("TEAM_ASSEMBLE_LEVEL_MIN_QUESTION", 1, 100);
+        int max = InputManager.Integer("TEAM_ASSEMBLE_LEVEL_MAX_QUESTION", min, 100);
         return new ArrayList<>(List.of(min, max));
     }
 
     /**
-     * Asks the user if they want to set a custom level range for the Palmons in the team.
+     * Asks the user if they want to set a custom level range for the Palmons in the
+     * team.
+     * 
      * @return true if the user wants to set a custom level range, false otherwise
-     * Time Complexity: O(1) for prompting the user.
+     *         Time Complexity: O(1) for prompting the user.
      */
     private static boolean shouldSetCustomLevelRange() {
         if (customLevelRangeAsked) {
             return false;
         }
-        int choice = InputManager.SelectWithIndex(LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_QUESTION"),
-                Map.of(1, LocaleManager.getMessage("GENERAL_YES"), 2, LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_NO")));
+        int choice = InputManager.SelectWithIndex("TEAM_ASSEMBLE_LEVEL_QUESTION",
+                Map.of(1, LocaleManager.getMessage("GENERAL_YES"), 2,
+                        LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_NO")));
         customLevelRangeAsked = true;
         return choice == 1;
     }
@@ -186,7 +198,7 @@ public class TeamBuilder {
      * 
      * @param team the team
      * @return the team with assigned fight moves
-     * Time Complexity: O(k) where k is the number of Palmons in the team.
+     *         Time Complexity: O(k) where k is the number of Palmons in the team.
      */
     private static Team assignPalmonFightMoves(Team team) {
         for (Palmon palmon : team.getPalmons()) {

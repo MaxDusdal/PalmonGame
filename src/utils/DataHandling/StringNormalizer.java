@@ -11,6 +11,7 @@ public class StringNormalizer {
      * 
      * @param word the word to capitalize
      * @return the word with its first letter capitalized, or the original word if it is null or empty
+     * Time Complexity: O(n) where n is the length of the word
      */
     public static String capitalizeFirst(String word) {
         if (word == null || word.isEmpty()) return word;
@@ -23,6 +24,7 @@ public class StringNormalizer {
      * 
      * @param name the name to normalize
      * @return the normalized name with each word capitalized
+     * Time Complexity: O(n) where n is the length of the name
      */
     public static String name(String name) {
         String temp = capitalizeFirst(name.toLowerCase().replace("-", " "));

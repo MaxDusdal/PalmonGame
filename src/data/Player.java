@@ -23,6 +23,7 @@ public class Player {
      * Sets the name of the user.
      *
      * @param name the name of the user
+     * Time Complexity: O(1)
      */
     public static void setUserName(String name) {
         userName = name;
@@ -32,6 +33,7 @@ public class Player {
      * Sets the name of the opponent.
      *
      * @param name the name of the opponent
+     * Time Complexity: O(1)
      */
     public static void setOpponentName(String name) {
         opponentName = name;
@@ -41,6 +43,7 @@ public class Player {
      * Gets the name of the user.
      *
      * @return the name of the user
+     * Time Complexity: O(1)
      */
     public static String getUserName() {
         return userName;
@@ -50,6 +53,7 @@ public class Player {
      * Gets the name of the opponent.
      *
      * @return the name of the opponent
+     * Time Complexity: O(1)
      */
     public static String getOpponentName() {
         return opponentName;
@@ -57,6 +61,7 @@ public class Player {
 
     /**
      * Prompts the user to enter names for themselves and their opponent.
+     * Time Complexity: O(1)
      */
     public static void initializeNames() {
         userName = InputManager.String("PLAYER_NAME_QUESTION");
@@ -67,6 +72,7 @@ public class Player {
 
     /**
      * Saves the player names to a CSV file.
+     * Time Complexity: O(1)
      */
     public static void saveProfile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROFILE_FILE, false))) {
@@ -81,6 +87,7 @@ public class Player {
      * Loads the player names from a CSV file.
      *
      * @return true if the profile was loaded successfully, false otherwise
+     * Time Complexity: O(n) where n is the number of lines in the CSV file
      */
     public static boolean loadProfile() {
         if (!Files.exists(Paths.get(PROFILE_FILE))) {
@@ -105,6 +112,7 @@ public class Player {
      * Reads the profile information from the CSV file.
      *
      * @return the profile information as a string
+     * Time Complexity: O(n) where n is the number of lines in the CSV file
      */
     public static String getProfileInfo() {
         if (!Files.exists(Paths.get(PROFILE_FILE))) {
@@ -128,8 +136,8 @@ public class Player {
     }
 
     /**
-     * Prompts the user to decide whether to load an existing profile or create a
-     * new one.
+     * Prompts the user to decide whether to load an existing profile or create a new one.
+     * Time Complexity: O(1)
      */
     public static void initializeOrLoadProfile() {
         if (Files.exists(Paths.get(PROFILE_FILE))) {

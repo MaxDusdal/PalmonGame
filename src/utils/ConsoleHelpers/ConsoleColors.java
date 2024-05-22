@@ -18,42 +18,50 @@ public class ConsoleColors {
 
     /**
      * Returns the given text in the specified color.
-     *
+     * Time Complexity: O(1)
      * @param color the ANSI color code
      * @param text  the text to color
      * @return the colored text
      */
     public static String colorize(String text, String color) {
         String colorCode;
-        if (color.equals("red"))
-            colorCode = RED;
-        else if (color.equals("green"))
-            colorCode = GREEN;
-        else if (color.equals("yellow"))
-            colorCode = YELLOW;
-        else if (color.equals("blue"))
-            colorCode = BLUE;
-        else if (color.equals("magenta"))
-            colorCode = MAGENTA;
-        else if (color.equals("cyan"))
-            colorCode = CYAN;
-        else if (color.equals("white"))
-            colorCode = WHITE;
-        else
-            throw new IllegalArgumentException("Invalid color");
+        switch (color.toLowerCase()) {
+            case "red":
+                colorCode = RED;
+                break;
+            case "green":
+                colorCode = GREEN;
+                break;
+            case "yellow":
+                colorCode = YELLOW;
+                break;
+            case "blue":
+                colorCode = BLUE;
+                break;
+            case "magenta":
+                colorCode = MAGENTA;
+                break;
+            case "cyan":
+                colorCode = CYAN;
+                break;
+            case "white":
+                colorCode = WHITE;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid color");
+        }
         return colorCode + text + RESET;
     }
 
     /**
      * Returns the given text in the specified color and bold.
-     * Uses the colorize method to apply the color. And adds the ANSI code for bold.
-     * 
+     * Uses the colorize method to apply the color and adds the ANSI code for bold.
+     * Time Complexity: O(1)
      * @param text  the text to color
      * @param color the ANSI color code
      * @return the colored and bold text
      */
     public static String colorizeAndBold(String text, String color) {
         return "\033[1m" + colorize(text, color);
-        
     }
 }

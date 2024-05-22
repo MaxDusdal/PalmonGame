@@ -1,12 +1,9 @@
 import data.Battle;
-import data.Move;
-import data.Palmon;
 import data.Player;
 import data.Team;
 import service.DataIngestingService;
 import utils.LocaleManager;
 import utils.TeamBuilder;
-import utils.ConsoleHelpers.TableCreator;
 
 import java.util.concurrent.CompletableFuture;
 

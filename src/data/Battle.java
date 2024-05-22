@@ -6,9 +6,6 @@ import utils.ConsoleHelpers.InputManager;
 import utils.ConsoleHelpers.TableCreator;
 import utils.LocaleManager;
 
-import java.util.Map;
-import java.util.Random;
-
 public class Battle {
     private Team playerTeam;
     private Team opponentTeam;
@@ -18,6 +15,12 @@ public class Battle {
         this.opponentTeam = opponentTeam;
     }
 
+    /**
+     * Starts the battle between the player's team and the opponent's team.
+     * The battle continues until one of the teams is defeated.
+     * The battle result is saved in the battle history.
+     * Time Complexity: O(n)
+     */
     public void startBattle() {
         System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("BATTLE_START"), "green"));
         sleep(1000);
@@ -35,6 +38,13 @@ public class Battle {
         }
     }
 
+    /**
+     * Executes a round of the battle.
+     * A round consists of a sequence of attacks between the player's team and the opponent's team.
+     * The round continues until one of the teams is defeated.
+     * The battle status is printed at the beginning of each round.
+     * Time Complexity: O(n^2)
+     */
     private void round() {
         int round = 1;
         int playerTeamPalmonIndex = 0;
@@ -70,12 +80,20 @@ public class Battle {
         }
 
         if (playerTeam.isDefeated()) {
-            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_TEAM_DEFEATED"), "red"));
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_TEAM_DEFEATED", Player.getUserName()), "red"));
         } else {
-            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_TEAM_DEFEATED"), "green"));
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_TEAM_DEFEATED", Player.getOpponentName()), "green"));
         }
     }
 
+    /**
+     * Executes a sequence of attacks between the player's Palmon and the opponent's Palmon.
+     * The attack sequence continues until one of the Palmons is defeated.
+     * The attack sequence consists of the player's Palmon attacking first, followed by the opponent's Palmon.
+     * @param playerPalmon the currently active Palmon of the player
+     * @param opponentPalmon the currently active Palmon of the opponent
+     * Time Complexity: O(1)
+     */
     private void attackSequence(Palmon playerPalmon, Palmon opponentPalmon) {
         if (playerPalmon.getSpeed() >= opponentPalmon.getSpeed()) {
             attack(playerPalmon, opponentPalmon);
@@ -92,6 +110,16 @@ public class Battle {
         }
     }
 
+    /**
+     * Executes an attack from the attacker Palmon to the defender Palmon.
+     * The attacker Palmon chooses a move to use, and the defender Palmon receives the damage.
+     * The attack can miss if the move's accuracy is lower than a random number between 0 and 100.
+     * The attack can be not effective if the damage is lower than 0.
+     * 
+     * @param attacker the Palmon that attacks
+     * @param defender the Palmon that receives the attack
+     * Time Complexity: O(1)
+     */
     private void attack(Palmon attacker, Palmon defender) {
         checkForMaxUsages(attacker);
         TableCreator.printPalmonFightMoves(attacker);
@@ -105,9 +133,9 @@ public class Battle {
             return;
         }
 
-        int damage = attacker.getAttack() + chosenMove.getDamage() - defender.getDefense();
+        int damage = attacker.getAttack() + chosenMove.getDamage();
         float effectivity = DataStorageService.getEffectivityMultiplier(attacker.getPrimaryType(), defender.getPrimaryType());
-        damage *= effectivity;
+        damage = (int) (damage * effectivity) - defender.getDefense();
 
         if (damage < 0) {
             damage = 0;
@@ -120,6 +148,13 @@ public class Battle {
         defender.attack(damage);
     }
 
+    /**
+     * Executes an attack from the bot Palmon to the player's Palmon.
+     * The bot Palmon chooses a random move to use, and the player's Palmon receives the damage.
+     * @param attacker the Palmon that attacks
+     * @param defender the Palmon that receives the attack
+     * Time Complexity: O(1)
+     */
     private void attackByOpponent(Palmon attacker, Palmon defender) {
         checkForMaxUsages(attacker);
         int moveChoice = (int) (Math.random() * attacker.getFightMoves().size());
@@ -147,14 +182,31 @@ public class Battle {
         defender.attack(damage);
     }
 
+    /**
+     * Checks if a team is defeated.
+     * A team is defeated if all of its Palmons are defeated.
+     * @param team the team to check
+     * @return true if the team is defeated, false otherwise
+     * Time Complexity: O(n)
+     */
     private boolean isTeamDefeated(Team team) {
         return team.getPalmons().stream().allMatch(Palmon::isDefeated);
     }
 
+    /**
+     * Removes the moves that have reached their maximum number of usages from the Palmon's fight moves.
+     * @param palmon the Palmon to check
+     * Time Complexity: O(n)
+     */
     private void checkForMaxUsages(Palmon palmon) {
         palmon.getFightMoves().removeIf(move -> !move.isUsable());
     }
 
+    /**
+     * Prints the battle status, including the status of the player's team and the opponent's team.
+     * The status includes the name, health, and status of each Palmon in the team.
+     * Time Complexity: O(n)
+     */
     private void printBattleStatus() {
         System.out.println();
         System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("BATTLE_STATUS"), "cyan"));
@@ -164,6 +216,11 @@ public class Battle {
         TableCreator.printTeam(opponentTeam);
     }
 
+    /**
+     * Adds a delay to the execution of the program.
+     * @param milliseconds the number of milliseconds to sleep
+     * Time Complexity: O(1)
+     */
     private void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);

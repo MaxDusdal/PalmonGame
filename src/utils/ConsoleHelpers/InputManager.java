@@ -13,8 +13,9 @@ public class InputManager {
 
     /**
      * Prompts the user to select an option from a list of options.
+     * Time Complexity: O(n) where n is the number of options
      * 
-     * @param prompt  the message to display to the user
+     * @param promptKey  the message to display to the user
      * @param options a map of options where the key is the value and the value is
      *                the option/description
      * @return the key of the selected option
@@ -42,8 +43,9 @@ public class InputManager {
 
     /**
      * Prompts the user to select an option from a list of options.
+     * Time Complexity: O(n log n) where n is the number of options (due to sorting)
      * 
-     * @param prompt  the message to display to the user
+     * @param promptKey  the message to display to the user
      * @param options a map of options where the key is the index and the value is the option/description
      * @return the key of the selected option
      */
@@ -67,7 +69,7 @@ public class InputManager {
             System.out.println(ConsoleColors.colorizeAndBold(
                     LocaleManager.getMessage("INPUT_SELECT_INVALID", sortedOptions.keySet().toString()), "red"));
             scanner.nextLine(); // Clear the buffer
-            return SelectWithIndex(prompt, options);
+            return SelectWithIndex(promptKey, options);
         }
 
         while (!sortedOptions.containsKey(selection)) {
@@ -82,11 +84,11 @@ public class InputManager {
 
     /**
      * Prompts the user for a string input.
+     * Time Complexity: O(1)
      * 
-     * @param prompt the message to display to the user
+     * @param promptKey the message to display to the user
      * @return a string input by the user
      */
-
     public static String String(String promptKey) {
         String prompt = getPromptFromKey(promptKey);
         System.out.println("\n\n" + prompt);
@@ -97,6 +99,7 @@ public class InputManager {
 
     /**
      * Prompts the user for a comma-separated list of strings.
+     * Time Complexity: O(n) where n is the number of input strings
      * 
      * @param promptKey    the message to display to the user
      * @param validArrayList an ArrayList of valid values
@@ -114,7 +117,7 @@ public class InputManager {
             System.out
                     .println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_EMPTY"), "red"));
 
-            return StringArray(prompt, validArrayList);
+            return StringArray(promptKey, validArrayList);
         }
 
         String[] inputArray = input.split(",");
@@ -124,7 +127,7 @@ public class InputManager {
             // Check for empty values within the array
             if (s.trim().isEmpty()) {
                 System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
-                return StringArray(prompt, validArrayList);
+                return StringArray(promptKey, validArrayList);
             }
             stringList.add(s.trim());
         }
@@ -133,7 +136,7 @@ public class InputManager {
             if (!validArrayList.contains(s)) {
                 System.out.println(ConsoleColors
                         .colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_NOT_IN_LIST"), "red"));
-                return StringArray(prompt, validArrayList);
+                return StringArray(promptKey, validArrayList);
             }
         }
 
@@ -142,9 +145,9 @@ public class InputManager {
 
     /**
      * Prompts the user for an integer input.
-     * Uses recursion to prompt the user again if the input is not an integer.
+     * Time Complexity: O(1)
      * 
-     * @param prompt the message to display to the user
+     * @param promptKey the message to display to the user
      * @return an integer input by the user
      */
     public static int Integer(String promptKey) {
@@ -159,18 +162,18 @@ public class InputManager {
         } catch (Exception e) {
             System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
             scanner.nextLine(); // Clear the buffer
-            return Integer(prompt);
+            return Integer(promptKey);
         }
     }
 
     /**
      * Prompts the user for an integer input within a specified range.
-     * Uses recursion to prompt the user again if the input is out of range.
+     * Time Complexity: O(1)
      * 
-     * @param prompt        the message to display to the user
-     * @param lowerBoundary the lower boundary of the range (inclusive)£
+     * @param promptKey    the message to display to the user
+     * @param lowerBoundary the lower boundary of the range (inclusive)
      * @param upperBoundary the upper boundary of the range (inclusive)
-     * @return a CompletableFuture that completes when the data is loaded and stored
+     * @return an integer input by the user
      */
     public static int Integer(String promptKey, Integer lowerBoundary, Integer upperBoundary) {
         Integer input = Integer(promptKey);
@@ -186,9 +189,9 @@ public class InputManager {
 
     /**
      * Prompts the user for a comma-separated list of integers.
-     * Uses recursion to prompt the user again if the input is invalid.
+     * Time Complexity: O(n) where n is the number of input integers
      * 
-     * @param prompt the message to display to the user
+     * @param promptKey the message to display to the user
      * @returns a list of integers input by the user
      */
     public static ArrayList<Integer> IntegerArray(String promptKey) {
@@ -203,7 +206,7 @@ public class InputManager {
             System.out
                     .println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_EMPTY"), "red"));
 
-            return IntegerArray(prompt);
+            return IntegerArray(promptKey);
         }
 
         String[] inputArray = input.split(",");
@@ -215,39 +218,36 @@ public class InputManager {
                 if (s.trim().isEmpty()) {
                     System.out.println(
                             ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
-                    return IntegerArray(prompt);
+                    return IntegerArray(promptKey);
                 }
                 intList.add(Integer.parseInt(s.trim()));
             }
         } catch (NumberFormatException e) {
             System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
 
-            return IntegerArray(prompt);
+            return IntegerArray(promptKey);
         }
 
         return intList;
     }
 
     /**
-     * Prompts the user for a comma-separated list of integers within a specified
-     * range.
-     * Uses recursion to prompt the user again if the input is invalid or out of
-     * range.
+     * Prompts the user for a comma-separated list of integers within a specified range.
+     * Time Complexity: O(n) where n is the number of input integers
      * 
-     * @param prompt        the message to display to the user
+     * @param promptKey    the message to display to the user
      * @param lowerBoundary the lower boundary of the range (inclusive)
      * @param upperBoundary the upper boundary of the range (inclusive)
      * @returns a list of integers input by the user
      */
     public static ArrayList<Integer> IntegerArray(String promptKey, Integer lowerBoundary, Integer upperBoundary) {
-        String prompt = getPromptFromKey(promptKey);
-        ArrayList<Integer> input = IntegerArray(prompt);
+        ArrayList<Integer> input = IntegerArray(promptKey);
 
         for (Integer i : input) {
             if (i < lowerBoundary || i > upperBoundary) {
                 System.out.println(ConsoleColors.colorizeAndBold(
                         LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
-                return IntegerArray(prompt, lowerBoundary, upperBoundary);
+                return IntegerArray(promptKey, lowerBoundary, upperBoundary);
             }
         }
 
@@ -255,31 +255,31 @@ public class InputManager {
     }
 
     /**
-     * Prompts the user for a comma-separated list of integers within a specified
-     * list of valid values.
-     * Uses recursion to prompt the user again if the input is invalid or not in the
-     * list of valid values.
+     * Prompts the user for a comma-separated list of integers within a specified list of valid values.
+     * Time Complexity: O(n) where n is the number of input integers
      * 
-     * @param prompt      the message to display to the user
+     * @param promptKey   the message to display to the user
      * @param validValues an ArrayList of valid values
      * @returns a list of integers input by the user
      */
-
     public static ArrayList<Integer> IntegerArray(String promptKey, ArrayList<Integer> validValues) {
-        String prompt = getPromptFromKey(promptKey);
-        ArrayList<Integer> input = IntegerArray(prompt);
+        ArrayList<Integer> input = IntegerArray(promptKey);
 
         for (Integer i : input) {
             if (!validValues.contains(i)) {
                 System.out.println(ConsoleColors
                         .colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_NOT_IN_LIST"), "red"));
-                return IntegerArray(prompt, validValues);
+                return IntegerArray(promptKey, validValues);
             }
         }
 
         return input;
     }
 
+    /**
+     * Prompts the user to press Enter to continue.
+     * Time Complexity: O(1)
+     */
     public static void EnterToContinue() {
         System.out.print(LocaleManager.getMessage("INPUT_ENTER_TO_CONTINUE"));
         scanner.nextLine();
@@ -287,6 +287,7 @@ public class InputManager {
 
     /**
      * Takes a map and sorts it by key in ascending order.
+     * Time Complexity: O(n log n) where n is the number of entries in the map
      * 
      * @param <K> the type of the keys
      * @param <V> the type of the values
@@ -311,6 +312,7 @@ public class InputManager {
 
     /**
      * Uses the LocaleManager to get the prompt message from the key.
+     * Time Complexity: O(1)
      * 
      * @param key the key to get the prompt message
      * @returns the prompt message

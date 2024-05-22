@@ -10,6 +10,7 @@ public class TablePrinter {
 
     /**
      * Creates a new TablePrinter with the given headers.
+     * Time Complexity: O(n) where n is the number of headers
      * 
      * @param headers the headers of the table
      */
@@ -24,6 +25,7 @@ public class TablePrinter {
     
     /**
      * Adds a row to the table.
+     * Time Complexity: O(m) where m is the number of columns
      * 
      * @param row the row to add
      */
@@ -41,6 +43,7 @@ public class TablePrinter {
     
     /**
      * Prints the table to the console.
+     * Time Complexity: O(n * m) where n is the number of rows and m is the number of columns
      */
     public void print() {
         printLine();
@@ -54,6 +57,7 @@ public class TablePrinter {
 
     /**
      * Prints a line to the console. This is used to separate the table header, rows, and footer.
+     * Time Complexity: O(m) where m is the number of columns
      */
     private void printLine() {
         for (int width : columnWidths) {
@@ -65,6 +69,7 @@ public class TablePrinter {
 
     /**
      * Prints a row to the console.
+     * Time Complexity: O(m) where m is the number of columns
      * 
      * @param row the row to print
      */

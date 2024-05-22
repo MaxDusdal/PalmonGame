@@ -23,7 +23,7 @@ public class Battle {
      */
     public void startBattle() {
         System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("BATTLE_START"), "green"));
-        sleep(1000);
+        sleep(2000);
 
         while (!isTeamDefeated(playerTeam) && !isTeamDefeated(opponentTeam)) {
             round();
@@ -63,7 +63,7 @@ public class Battle {
                 System.out.println();
                 System.out.println(ConsoleColors.colorizeAndBold("\n" + LocaleManager.getMessage("BATTLE_ROUND", round++), "cyan"));
                 System.out.println(ConsoleColors.colorize(playerPalmon.getName(), "blue") + " vs. " + ConsoleColors.colorize(opponentPalmon.getName(), "red"));
-                sleep(1000); // Add a delay before the attack sequence
+                sleep(2000); // Add a delay before the attack sequence
                 attackSequence(playerPalmon, opponentPalmon);
             }
 
@@ -72,14 +72,14 @@ public class Battle {
                 playerTeamPalmonIndex++;
                 if (playerTeamPalmonIndex < playerTeam.getPalmons().size()) {
                     playerPalmon = playerTeam.getPalmons().get(playerTeamPalmonIndex);
-                    sleep(1000); // Add a delay before the next Palmon comes out
+                    sleep(2000); // Add a delay before the next Palmon comes out
                 }
             } else if (opponentPalmon.isDefeated()) {
                 System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_STATUS_DEFEATED", opponentPalmon.getName()), "green"));
                 opponentTeamPalmonIndex++;
                 if (opponentTeamPalmonIndex < opponentTeam.getPalmons().size()) {
                     opponentPalmon = opponentTeam.getPalmons().get(opponentTeamPalmonIndex);
-                    sleep(1000); // Add a delay before the next Palmon comes out
+                    sleep(2000); // Add a delay before the next Palmon comes out
                 }
             }
         }
@@ -103,13 +103,13 @@ public class Battle {
         if (playerPalmon.getSpeed() >= opponentPalmon.getSpeed()) {
             attack(playerPalmon, opponentPalmon);
             if (!opponentPalmon.isDefeated()) {
-                sleep(1000); // Add a delay before the counterattack
+                sleep(2000); // Add a delay before the counterattack
                 attackByOpponent(opponentPalmon, playerPalmon);
             }
         } else {
             attackByOpponent(opponentPalmon, playerPalmon);
             if (!playerPalmon.isDefeated()) {
-                sleep(1000); // Add a delay before the counterattack
+                sleep(2000); // Add a delay before the counterattack
                 attack(playerPalmon, opponentPalmon);
             }
         }
@@ -146,7 +146,7 @@ public class Battle {
 
         Move chosenMove = attacker.getFightMoves().get(moveChoice - 1);
         System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_USED", attacker.getName(), chosenMove.getName()), "magenta"));
-        sleep(1000); // Add a delay before showing the move effect
+        sleep(2000); // Add a delay before showing the move effect
 
         if (chosenMove.getAccuracy() < Math.random() * 100) {
             System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_MISSED_ATTACK", attacker.getName()), "yellow"));
@@ -182,7 +182,7 @@ public class Battle {
         int moveChoice = (int) (Math.random() * attacker.getFightMoves().size());
         Move chosenMove = attacker.getFightMoves().get(moveChoice);
         System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_USED", attacker.getName(), chosenMove.getName()), "magenta"));
-        sleep(1000); // Add a delay before showing the move effect
+        sleep(2000); // Add a delay before showing the move effect
 
         if (chosenMove.getAccuracy() < Math.random() * 100) {
             System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_MISSED_ATTACK", attacker.getName()), "yellow"));

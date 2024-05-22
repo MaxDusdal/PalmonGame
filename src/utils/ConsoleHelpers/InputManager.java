@@ -280,6 +280,11 @@ public class InputManager {
         return input;
     }
 
+    public static void EnterToContinue() {
+        System.out.print(LocaleManager.getMessage("INPUT_ENTER_TO_CONTINUE"));
+        scanner.nextLine();
+    }
+
     /**
      * Takes a map and sorts it by key in ascending order.
      * 

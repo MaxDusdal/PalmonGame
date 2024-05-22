@@ -1,6 +1,13 @@
 package data;
 
-import java.util.Comparator;
+import service.DataStorageService;
+import utils.ConsoleHelpers.ConsoleColors;
+import utils.ConsoleHelpers.InputManager;
+import utils.ConsoleHelpers.TableCreator;
+import utils.LocaleManager;
+
+import java.util.Map;
+import java.util.Random;
 
 public class Battle {
     private Team playerTeam;
@@ -12,14 +19,19 @@ public class Battle {
     }
 
     public void startBattle() {
+        System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("BATTLE_START"), "green"));
+        sleep(1000);
+
         while (!isTeamDefeated(playerTeam) && !isTeamDefeated(opponentTeam)) {
             round();
         }
 
         if (isTeamDefeated(playerTeam)) {
-            System.out.println("Opponent wins!");
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS"), "red"));
+            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS"));
         } else {
-            System.out.println("Player wins!");
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS"), "green"));
+            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS"));
         }
     }
 
@@ -31,33 +43,132 @@ public class Battle {
         Palmon playerPalmon = playerTeam.getPalmons().get(playerTeamPalmonIndex);
         Palmon opponentPalmon = opponentTeam.getPalmons().get(opponentTeamPalmonIndex);
 
-        while (!playerPalmon.isDefeated() && !opponentPalmon.isDefeated()) {
-            System.out.println("Round " + round++);
-            System.out.println(playerPalmon.getName() + " vs. " + opponentPalmon.getName());
-            attackSequence(playerPalmon, opponentPalmon);
+        while (!playerTeam.isDefeated() && !opponentTeam.isDefeated()) {
+            while (!playerPalmon.isDefeated() && !opponentPalmon.isDefeated()) {
+                printBattleStatus();
+                System.out.println(ConsoleColors.colorizeAndBold("\n" + LocaleManager.getMessage("BATTLE_ROUND") + " " + round++, "cyan"));
+                System.out.println(ConsoleColors.colorize(playerPalmon.getName(), "blue") + " vs. " + ConsoleColors.colorize(opponentPalmon.getName(), "red"));
+                sleep(1000); // Add a delay before the attack sequence
+                attackSequence(playerPalmon, opponentPalmon);
+            }
+
+            if (playerPalmon.isDefeated()) {
+                System.out.println(ConsoleColors.colorize(playerPalmon.getName() + " " + LocaleManager.getMessage("BATTLE_STATUS_DEFEATED"), "red"));
+                playerTeamPalmonIndex++;
+                if (playerTeamPalmonIndex < playerTeam.getPalmons().size()) {
+                    playerPalmon = playerTeam.getPalmons().get(playerTeamPalmonIndex);
+                    sleep(1000); // Add a delay before the next Palmon comes out
+                }
+            } else if (opponentPalmon.isDefeated()) {
+                System.out.println(ConsoleColors.colorize(opponentPalmon.getName() + " " + LocaleManager.getMessage("BATTLE_STATUS_DEFEATED"), "green"));
+                opponentTeamPalmonIndex++;
+                if (opponentTeamPalmonIndex < opponentTeam.getPalmons().size()) {
+                    opponentPalmon = opponentTeam.getPalmons().get(opponentTeamPalmonIndex);
+                    sleep(1000); // Add a delay before the next Palmon comes out
+                }
+            }
         }
 
+        if (playerTeam.isDefeated()) {
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_TEAM_DEFEATED"), "red"));
+        } else {
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_TEAM_DEFEATED"), "green"));
+        }
     }
 
     private void attackSequence(Palmon playerPalmon, Palmon opponentPalmon) {
-        attack(playerPalmon, opponentPalmon);
-        if (!opponentPalmon.isDefeated()) {
-            attack(opponentPalmon, playerPalmon);
+        if (playerPalmon.getSpeed() >= opponentPalmon.getSpeed()) {
+            attack(playerPalmon, opponentPalmon);
+            if (!opponentPalmon.isDefeated()) {
+                sleep(1000); // Add a delay before the counterattack
+                attackByOpponent(opponentPalmon, playerPalmon);
+            }
+        } else {
+            attackByOpponent(opponentPalmon, playerPalmon);
+            if (!playerPalmon.isDefeated()) {
+                sleep(1000); // Add a delay before the counterattack
+                attack(playerPalmon, opponentPalmon);
+            }
         }
     }
 
     private void attack(Palmon attacker, Palmon defender) {
-        int damage = attacker.getAttack() - defender.getDefense();
+        checkForMaxUsages(attacker);
+        TableCreator.printPalmonFightMoves(attacker);
+        int moveChoice = InputManager.Integer(LocaleManager.getMessage("BATTLE_CHOOSE_MOVE"), 1, attacker.getFightMoves().size());
+        Move chosenMove = attacker.getFightMoves().get(moveChoice - 1);
+        System.out.println(ConsoleColors.colorize(attacker.getName() + " " + LocaleManager.getMessage("BATTLE_USED") + " " + chosenMove.getName(), "magenta"));
+        sleep(1000); // Add a delay before showing the move effect
+
+        if (chosenMove.getAccuracy() < Math.random() * 100) {
+            System.out.println(ConsoleColors.colorize(attacker.getName() + " " + LocaleManager.getMessage("BATTLE_MISSED_ATTACK"), "yellow"));
+            return;
+        }
+
+        int damage = attacker.getAttack() + chosenMove.getDamage() - defender.getDefense();
+        float effectivity = DataStorageService.getEffectivityMultiplier(attacker.getPrimaryType(), defender.getPrimaryType());
+        damage *= effectivity;
+
+        if (damage < 0) {
+            damage = 0;
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_ATTACK_NOT_EFFECTIVE"), "yellow"));
+            return;
+        }
+
+        System.out.println(ConsoleColors.colorize(attacker.getName() + " " + LocaleManager.getMessage("BATTLE_DEALT") + " " + damage + " " + LocaleManager.getMessage("BATTLE_DAMAGE_TO") + " " + defender.getName(), "green"));
+        chosenMove.use();
         defender.attack(damage);
-        System.out.println(attacker.getName() + " attacks " + defender.getName() + " for " + damage + " damage.");
+    }
+
+    private void attackByOpponent(Palmon attacker, Palmon defender) {
+        checkForMaxUsages(attacker);
+        int moveChoice = (int) (Math.random() * attacker.getFightMoves().size());
+        Move chosenMove = attacker.getFightMoves().get(moveChoice);
+        System.out.println(ConsoleColors.colorize(attacker.getName() + " " + LocaleManager.getMessage("BATTLE_USED") + " " + chosenMove.getName(), "magenta"));
+        sleep(1000); // Add a delay before showing the move effect
+
+        if (chosenMove.getAccuracy() < Math.random() * 100) {
+            System.out.println(ConsoleColors.colorize(attacker.getName() + " " + LocaleManager.getMessage("BATTLE_MISSED_ATTACK"), "yellow"));
+            return;
+        }
+
+        int damage = attacker.getAttack() + chosenMove.getDamage() - defender.getDefense();
+        float effectivity = DataStorageService.getEffectivityMultiplier(attacker.getPrimaryType(), defender.getPrimaryType());
+        damage *= effectivity;
+
+        if (damage < 0) {
+            damage = 0;
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_ATTACK_NOT_EFFECTIVE"), "yellow"));
+            return;
+        }
+
+        System.out.println(ConsoleColors.colorize(attacker.getName() + " " + LocaleManager.getMessage("BATTLE_DEALT") + " " + damage + " " + LocaleManager.getMessage("BATTLE_DAMAGE_TO") + " " + defender.getName(), "green"));
+        chosenMove.use();
+        defender.attack(damage);
     }
 
     private boolean isTeamDefeated(Team team) {
-        for (Palmon palmon : team.getPalmons()) {
-            if (!palmon.isDefeated()) {
-                return false;
-            }
+        return team.getPalmons().stream().allMatch(Palmon::isDefeated);
+    }
+
+    private void checkForMaxUsages(Palmon palmon) {
+        palmon.getFightMoves().removeIf(move -> !move.isUsable());
+    }
+
+    private void printBattleStatus() {
+        System.out.println();
+        System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("BATTLE_STATUS"), "cyan"));
+        System.out.println(ConsoleColors.colorize(Player.getUserName() + "'s " + LocaleManager.getMessage("BATTLE_TEAM"), "green"));
+        TableCreator.printTeam(playerTeam);
+        System.out.println(ConsoleColors.colorize(Player.getOpponentName() + "'s " + LocaleManager.getMessage("BATTLE_TEAM"), "red"));
+        TableCreator.printTeam(opponentTeam);
+    }
+
+    private void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
-        return true;
     }
 }

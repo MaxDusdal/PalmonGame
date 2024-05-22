@@ -18,4 +18,23 @@ public class Team {
     public List<Palmon> getPalmons() {
         return palmons;
     }
+
+    public List<Palmon> getRemainingPalmons() {
+        List<Palmon> remainingPalmons = new ArrayList<>();
+        for (Palmon palmon : palmons) {
+            if (!palmon.isDefeated()) {
+                remainingPalmons.add(palmon);
+            }
+        }
+        return remainingPalmons;
+    }
+
+    public boolean isDefeated() {
+        for (Palmon palmon : palmons) {
+            if (!palmon.isDefeated()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

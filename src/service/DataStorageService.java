@@ -60,6 +60,14 @@ public class DataStorageService {
     public static HashMap<String, HashMap<String, Float>> getEffectivity() {
         return effectivity;
     }
+
+    /**
+     * Returns an effectivity multiplier for the given attacking and defending types.
+     * @return
+     */
+    public static float getEffectivityMultiplier(String attackingType, String defendingType) {
+        return effectivity.get(attackingType).get(defendingType);
+    }
     
     /**
      * Returns a map of parsers for the different data types.

@@ -30,4 +30,27 @@ public class Move {
         return damage;
     }
 
+    public int getUsages() {
+        return usages;
+    }
+
+    public int getMaxUsages() {
+        return maxUsages;
+    }
+
+    public int getAccuracy() {
+        return accuracy;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void use() {
+        usages++;
+    }
+
+    public boolean isUsable() {
+        return usages < maxUsages;
+    }
 }

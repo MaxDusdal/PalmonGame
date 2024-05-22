@@ -1,3 +1,4 @@
+import data.Battle;
 import data.Move;
 import data.Palmon;
 import data.Player;
@@ -12,20 +13,22 @@ import java.util.concurrent.CompletableFuture;
 public class Main {
 
     public static void main(String[] args) {
-        // Initialize LocaleManager for language support, defaults to English
-        LocaleManager.initialize();
-
-        Player.initializeOrLoadProfile();
-
         // Load and store CSV files asynchronously
         CompletableFuture<Void> dataIngestion = DataIngestingService.loadAndStoreCSVFiles();
 
+        // Initialize LocaleManager for language support, defaults to English
+        LocaleManager.initialize();
+
+        // Initialize or load the user profile
+        Player.initializeOrLoadProfile();
+
         dataIngestion.join(); // Wait for the async process to complete
-        System.out.println(LocaleManager.getMessage("loading_completed", "Palmon"));
 
         Team userteam = TeamBuilder.createUserTeam();
-
         Team opponentTeam = TeamBuilder.createOpponentTeam();
+
+        Battle battle = new Battle(userteam, opponentTeam);
+        battle.startBattle();
 
     }
 }

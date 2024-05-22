@@ -27,11 +27,11 @@ public class Battle {
         }
 
         if (isTeamDefeated(playerTeam)) {
-            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS"), "red"));
-            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS"));
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS", Player.getOpponentName()), "red"));
+            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_OPPONENT_WINS", Player.getOpponentName()));
         } else {
-            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS"), "green"));
-            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS"));
+            System.out.println(ConsoleColors.colorize(LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS", Player.getUserName()), "green"));
+            BattleHistory.saveBattleResult(playerTeam, opponentTeam, LocaleManager.getMessage("BATTLE_RESULT_PLAYER_WINS", Player.getUserName()));
         }
     }
 

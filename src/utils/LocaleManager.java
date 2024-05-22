@@ -7,8 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.Scanner;
-
 import utils.ConsoleHelpers.InputManager;
 
 /**
@@ -81,7 +79,7 @@ public class LocaleManager {
      * The user can choose between English and German.
      */
     public static void updateUserLocale() {
-        Integer selection = InputManager.SelectWithIndex(LocaleManager.getMessage("LANGUAGE_SELECT"), Map.of(1, "Englisch (default)", 2, "Deutsch"));
+        Integer selection = InputManager.SelectWithIndex("LANGUAGE_SELECT", Map.of(1, "Englisch (default)", 2, "Deutsch"));
         Locale locale;
         switch (selection) {
             case 2:

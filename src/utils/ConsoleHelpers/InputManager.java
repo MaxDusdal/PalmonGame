@@ -2,6 +2,8 @@ package utils.ConsoleHelpers;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import utils.LocaleManager;
@@ -17,7 +19,9 @@ public class InputManager {
      *                the option/description
      * @return the key of the selected option
      */
-    public static String Select(String prompt, Map<String, String> options) {
+    public static String Select(String promptKey, Map<String, String> options) {
+        String prompt = getPromptFromKey(promptKey);
+
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
 
@@ -28,7 +32,8 @@ public class InputManager {
         String selection = scanner.nextLine().trim();
 
         while (!options.containsKey(selection)) {
-            System.out.print(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
+            System.out.print(ConsoleColors.colorizeAndBold(
+                    LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
             selection = scanner.nextLine().trim();
         }
 
@@ -39,16 +44,17 @@ public class InputManager {
      * Prompts the user to select an option from a list of options.
      * 
      * @param prompt  the message to display to the user
-     * @param options a map of options where the key is the index and the value is
-     *                the option/description
+     * @param options a map of options where the key is the index and the value is the option/description
      * @return the key of the selected option
      */
-    // TODO: Maybe switch to LinkedHashMap to prevent reordering of the options
-    public static Integer SelectWithIndex(String prompt, Map<Integer, String> options) {
+    public static Integer SelectWithIndex(String promptKey, Map<Integer, String> options) {
+        String prompt = getPromptFromKey(promptKey);
+        LinkedHashMap<Integer, String> sortedOptions = sortMapByKey(options);
+
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
 
-        options.forEach((key, value) -> System.out.printf("  %d : %s%n", key, value));
+        sortedOptions.forEach((key, value) -> System.out.printf("  %d : %s%n", key, value));
         System.out.println("=".repeat(prompt.length()));
 
         System.out.print(LocaleManager.getMessage("INPUT_SELECT_ENTER"));
@@ -59,14 +65,14 @@ public class InputManager {
             scanner.nextLine();
         } catch (InputMismatchException e) {
             System.out.println(ConsoleColors.colorizeAndBold(
-                    LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
+                    LocaleManager.getMessage("INPUT_SELECT_INVALID", sortedOptions.keySet().toString()), "red"));
             scanner.nextLine(); // Clear the buffer
             return SelectWithIndex(prompt, options);
         }
 
-        while (!options.containsKey(selection)) {
+        while (!sortedOptions.containsKey(selection)) {
             System.out.print(ConsoleColors.colorizeAndBold(
-                    LocaleManager.getMessage("INPUT_SELECT_INVALID", options.keySet().toString()), "red"));
+                    LocaleManager.getMessage("INPUT_SELECT_INVALID", sortedOptions.keySet().toString()), "red"));
             selection = scanner.nextInt();
             scanner.nextLine();
         }
@@ -81,11 +87,57 @@ public class InputManager {
      * @return a string input by the user
      */
 
-    public static String String(String prompt) {
+    public static String String(String promptKey) {
+        String prompt = getPromptFromKey(promptKey);
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
         System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
         return scanner.nextLine().trim();
+    }
+
+    /**
+     * Prompts the user for a comma-separated list of strings.
+     * 
+     * @param promptKey    the message to display to the user
+     * @param validArrayList an ArrayList of valid values
+     * @returns a list of strings input by the user
+     */
+    public static ArrayList<String> StringArray(String promptKey, ArrayList<String> validArrayList) {
+        String prompt = getPromptFromKey(promptKey);
+        System.out.println("\n\n" + prompt);
+        System.out.println("=".repeat(prompt.length()));
+        System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
+        String input = scanner.nextLine().trim();
+
+        // Check for empty input
+        if (input.isEmpty()) {
+            System.out
+                    .println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_EMPTY"), "red"));
+
+            return StringArray(prompt, validArrayList);
+        }
+
+        String[] inputArray = input.split(",");
+        ArrayList<String> stringList = new ArrayList<>();
+
+        for (String s : inputArray) {
+            // Check for empty values within the array
+            if (s.trim().isEmpty()) {
+                System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
+                return StringArray(prompt, validArrayList);
+            }
+            stringList.add(s.trim());
+        }
+
+        for (String s : stringList) {
+            if (!validArrayList.contains(s)) {
+                System.out.println(ConsoleColors
+                        .colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_NOT_IN_LIST"), "red"));
+                return StringArray(prompt, validArrayList);
+            }
+        }
+
+        return stringList;
     }
 
     /**
@@ -95,7 +147,8 @@ public class InputManager {
      * @param prompt the message to display to the user
      * @return an integer input by the user
      */
-    public static int Integer(String prompt) {
+    public static int Integer(String promptKey) {
+        String prompt = getPromptFromKey(promptKey);
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
         System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
@@ -119,12 +172,13 @@ public class InputManager {
      * @param upperBoundary the upper boundary of the range (inclusive)
      * @return a CompletableFuture that completes when the data is loaded and stored
      */
-    public static int Integer(String prompt, Integer lowerBoundary, Integer upperBoundary) {
-        Integer input = Integer(prompt);
+    public static int Integer(String promptKey, Integer lowerBoundary, Integer upperBoundary) {
+        Integer input = Integer(promptKey);
 
         while (input < lowerBoundary || input > upperBoundary) {
-            System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
-            input = Integer(prompt);
+            System.out.println(ConsoleColors.colorizeAndBold(
+                    LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
+            input = Integer(promptKey);
         }
 
         return input;
@@ -137,7 +191,8 @@ public class InputManager {
      * @param prompt the message to display to the user
      * @returns a list of integers input by the user
      */
-    public static ArrayList<Integer> IntegerArray(String prompt) {
+    public static ArrayList<Integer> IntegerArray(String promptKey) {
+        String prompt = getPromptFromKey(promptKey);
         System.out.println("\n\n" + prompt);
         System.out.println("=".repeat(prompt.length()));
         System.out.print(LocaleManager.getMessage("INPUT_VALUE_ENTER"));
@@ -145,7 +200,8 @@ public class InputManager {
 
         // Check for empty input
         if (input.isEmpty()) {
-            System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_EMPTY"), "red"));
+            System.out
+                    .println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_EMPTY"), "red"));
 
             return IntegerArray(prompt);
         }
@@ -157,7 +213,8 @@ public class InputManager {
             for (String s : inputArray) {
                 // Check for empty values within the array
                 if (s.trim().isEmpty()) {
-                    System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
+                    System.out.println(
+                            ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_INVALID"), "red"));
                     return IntegerArray(prompt);
                 }
                 intList.add(Integer.parseInt(s.trim()));
@@ -182,12 +239,14 @@ public class InputManager {
      * @param upperBoundary the upper boundary of the range (inclusive)
      * @returns a list of integers input by the user
      */
-    public static ArrayList<Integer> IntegerArray(String prompt, Integer lowerBoundary, Integer upperBoundary) {
+    public static ArrayList<Integer> IntegerArray(String promptKey, Integer lowerBoundary, Integer upperBoundary) {
+        String prompt = getPromptFromKey(promptKey);
         ArrayList<Integer> input = IntegerArray(prompt);
 
         for (Integer i : input) {
             if (i < lowerBoundary || i > upperBoundary) {
-                System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
+                System.out.println(ConsoleColors.colorizeAndBold(
+                        LocaleManager.getMessage("INPUT_VALUE_OUT_OF_RANGE", lowerBoundary, upperBoundary), "red"));
                 return IntegerArray(prompt, lowerBoundary, upperBoundary);
             }
         }
@@ -206,16 +265,62 @@ public class InputManager {
      * @returns a list of integers input by the user
      */
 
-    public static ArrayList<Integer> IntegerArray(String prompt, ArrayList<Integer> validValues) {
+    public static ArrayList<Integer> IntegerArray(String promptKey, ArrayList<Integer> validValues) {
+        String prompt = getPromptFromKey(promptKey);
         ArrayList<Integer> input = IntegerArray(prompt);
 
         for (Integer i : input) {
             if (!validValues.contains(i)) {
-                System.out.println(ConsoleColors.colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_NOT_IN_LIST"),"red"));
+                System.out.println(ConsoleColors
+                        .colorizeAndBold(LocaleManager.getMessage("INPUT_VALUE_ARRAY_NOT_IN_LIST"), "red"));
                 return IntegerArray(prompt, validValues);
             }
         }
 
         return input;
+    }
+
+    /**
+     * Takes a map and sorts it by key in ascending order.
+     * 
+     * @param <K> the type of the keys
+     * @param <V> the type of the values
+     * @param map the map to sort
+     * @return a LinkedHashMap sorted by key
+     */
+    public static <K extends Comparable<K>, V> LinkedHashMap<K, V> sortMapByKey(Map<K, V> map) {
+        // Create a new LinkedHashMap to store the sorted entries
+        LinkedHashMap<K, V> sortedMap = new LinkedHashMap<>();
+
+        // Get the map entries and sort them by key
+        List<Map.Entry<K, V>> entries = new ArrayList<>(map.entrySet());
+        entries.sort(Map.Entry.comparingByKey());
+
+        // Put the sorted entries into the LinkedHashMap
+        for (Map.Entry<K, V> entry : entries) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+    /**
+     * Uses the LocaleManager to get the prompt message from the key.
+     * 
+     * @param key the key to get the prompt message
+     * @returns the prompt message
+     */
+    private static String getPromptFromKey(String key) {
+        String prompt;
+        try {
+            prompt = LocaleManager.getMessage(key);
+            if (prompt == null) {
+                throw new Exception("Key not found");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return key;
+        }
+        return prompt;
     }
 }

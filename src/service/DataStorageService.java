@@ -11,9 +11,15 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * A service class for storing data in memory.
+ * The class is designed to store data in memory and provide access to it.
+ */
 public class DataStorageService {
     private static ArrayList<Palmon> palmons = new ArrayList<>();
     private static ArrayList<Integer> palmonIds = new ArrayList<>();
+    private static ArrayList<String> palmonTypes = new ArrayList<>();
+
     private static CopyOnWriteArrayList<Move> moves = new CopyOnWriteArrayList<>();
     private static Map<Integer, Map<Integer, Integer>> palmonMoves = new ConcurrentHashMap<>();
     private static HashMap<String, HashMap<String, Float>> effectivity = new HashMap<>();
@@ -39,6 +45,10 @@ public class DataStorageService {
         return palmonIds;
     }
 
+    public static ArrayList<String> getPalmonTypes() {
+        return palmonTypes;
+    }
+
     public static CopyOnWriteArrayList<Move> getMoves() {
         return moves;
     }
@@ -50,23 +60,12 @@ public class DataStorageService {
     public static HashMap<String, HashMap<String, Float>> getEffectivity() {
         return effectivity;
     }
-
-    private static void extractPalmonIds() {
-        for (Palmon palmon : palmons) {
-            palmonIds.add(palmon.getId());
-        }
-    }
-
-    public static void assignData() {
-        palmons = palmonParser.getData();
-        moves = moveParser.getData();
-        palmonMoves = palmonMoveParser.getData();
-        effectivity = effectivityParser.getData();
-
-        extractPalmonIds();
-        associateMovesWithPalmons();
-    }
-
+    
+    /**
+     * Returns a map of parsers for the different data types.
+     * The key is the name of the data type and the value is the parser for that data type.
+     * @return
+     */
     public static Map<String, DataParser> getParsers() {
         Map<String, DataParser> parsers = new HashMap<>();
         parsers.put("palmon", palmonParser);
@@ -75,7 +74,48 @@ public class DataStorageService {
         parsers.put("effectivity", effectivityParser);
         return parsers;
     }
+    
+    /**
+     * Assigns the data from the parsers to the respective data structures.
+     * This method should be called after the data has been loaded.
+     */
+    public static void assignData() {
+        palmons = palmonParser.getData();
+        moves = moveParser.getData();
+        palmonMoves = palmonMoveParser.getData();
+        effectivity = effectivityParser.getData();
 
+        extractPalmonIds();
+        extractPalmonTypes();
+        associateMovesWithPalmons();
+    }
+
+    /**
+     * Extracts the IDs of all Palmons and stores them in a list.
+     * The list is used for quick access to Palmons by ID.
+     */
+    private static void extractPalmonIds() {
+        for (Palmon palmon : palmons) {
+            palmonIds.add(palmon.getId());
+        }
+    }
+    /**
+     * Extracts the types of all Palmons and stores them in a list. Doesn't store duplicates.
+     */
+    private static void extractPalmonTypes() {
+        for (Palmon palmon : palmons) {
+            if (!palmonTypes.contains(palmon.getPrimaryType())) {
+                palmonTypes.add(palmon.getPrimaryType());
+            }
+            if (!palmonTypes.contains(palmon.getSecondaryType())) {
+                palmonTypes.add(palmon.getSecondaryType());
+            }
+        }
+    }
+
+    /**
+     * Associates moves with Palmons based on the data from the Palmon-Move parser.
+     */
     private static void associateMovesWithPalmons() {
         Map<Integer, Palmon> palmonMap = new HashMap<>();
         for (Palmon palmon : palmons) {

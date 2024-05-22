@@ -25,4 +25,9 @@ public class Move {
     public String getName() {
         return name;
     }
+    
+    public int getDamage() {
+        return damage;
+    }
+
 }

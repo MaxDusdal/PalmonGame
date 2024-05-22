@@ -4,6 +4,7 @@ import data.Palmon;
 import data.Team;
 import service.DataStorageService;
 import utils.ConsoleHelpers.InputManager;
+import utils.LocaleManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 
 /**
  * The TeamBuilder class is responsible for creating teams for the user and the opponent.
- * It looks awful and is hard to read. The code is not organized well and is difficult to understand, but it works and time is running out.
  */
 public class TeamBuilder {
     private static final List<Palmon> availablePalmons = DataStorageService.getPalmons();
@@ -27,23 +27,25 @@ public class TeamBuilder {
      * @returns the user's team
      */
     public static Team createUserTeam() {
-        int choice = InputManager.SelectWithIndex("TEAM_ASSEMBLE_METHOD_QUESTION",
-                Map.of(1, "Random", 2, "By ID", 3, "By Type"));
+        int choice = InputManager.SelectWithIndex(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_QUESTION"),
+                Map.of(1, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_RANDOM"),
+                       2, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_ID"),
+                       3, LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_TYPE")));
         int teamSize = getTeamSize();
 
         switch (choice) {
             case 1:
                 return buildRandomTeam(teamSize);
             case 2:
-                List<Integer> idList = InputManager.IntegerArray("TEAM_ASSEMBLE_METHOD_ID_QUESTION",
+                List<Integer> idList = InputManager.IntegerArray(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_ID_QUESTION"),
                         DataStorageService.getPalmonIds());
                 return buildTeamById(idList);
             case 3:
-                List<String> types = InputManager.StringArray("TEAM_ASSEMBLE_METHOD_TYPE_QUESTION",
+                List<String> types = InputManager.StringArray(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_TYPE_QUESTION"),
                         DataStorageService.getPalmonTypes());
                 return buildTeamByType(types, teamSize);
             default:
-                System.out.println("Invalid choice.");
+                System.out.println(LocaleManager.getMessage("TEAM_ASSEMBLE_METHOD_INVALID"));
                 return buildRandomTeam(teamSize);
         }
     }
@@ -51,12 +53,10 @@ public class TeamBuilder {
     /**
      * Creates a team for the opponent. The user can choose to create a team randomly or by specifying the size.
      * 
-     * @param playerTeamSize the size of the player's team
      * @return the opponent's team
      */
     public static Team createOpponentTeam() {
-        int opponentTeamSize = InputManager
-                .Integer("TEAM_ASSEMBLE_AMOUNT_ENEMY", 0, 100);
+        int opponentTeamSize = InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_AMOUNT_ENEMY"), 0, 100);
         if (opponentTeamSize == 0) {
             opponentTeamSize = new Random().nextInt(6) + 1; // Random team size between 1 and 6
         }
@@ -129,7 +129,7 @@ public class TeamBuilder {
      * @return the size of the team
      */
     private static int getTeamSize() {
-        return InputManager.Integer("TEAM_ASSEMBLE_AMOUNT_USER", 1, 100);
+        return InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_AMOUNT_USER"), 1, 100);
     }
 
     /**
@@ -155,8 +155,8 @@ public class TeamBuilder {
      * @return
      */
     private static ArrayList<Integer> getPalmonLevels() {
-        int min = InputManager.Integer("TEAM_ASSEMBLE_LEVEL_MIN_QUESTION", 1, 100);
-        int max = InputManager.Integer("TEAM_ASSEMBLE_LEVEL_MAX_QUESTION", min, 100);
+        int min = InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_MIN_QUESTION"), 1, 100);
+        int max = InputManager.Integer(LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_MAX_QUESTION"), min, 100);
         return new ArrayList<>(List.of(min, max));
     }
 
@@ -168,8 +168,8 @@ public class TeamBuilder {
         if (customLevelRangeAsked) {
             return false;
         }
-        int choice = InputManager.SelectWithIndex("TEAM_ASSEMBLE_LEVEL_QUESTION",
-                Map.of(1, "Yes", 2, "No (assign random levels)"));
+        int choice = InputManager.SelectWithIndex(LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_QUESTION"),
+                Map.of(1, LocaleManager.getMessage("GENERAL_YES"), 2, LocaleManager.getMessage("TEAM_ASSEMBLE_LEVEL_NO")));
         customLevelRangeAsked = true;
         return choice == 1;
     }

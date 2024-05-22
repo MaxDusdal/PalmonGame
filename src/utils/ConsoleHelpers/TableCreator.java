@@ -23,7 +23,7 @@ public class TableCreator {
                         LocaleManager.getMessage("TABLE_HEADER_LEVEL"),
                         LocaleManager.getMessage("TABLE_HEADER_HEIGHT"),
                         LocaleManager.getMessage("TABLE_HEADER_WEIGHT"),
-                        LocaleManager.getMessage("TABLE_HEADER_HP"),
+                        "HP",
                         LocaleManager.getMessage("TABLE_HEADER_ATTACK"),
                         LocaleManager.getMessage("TABLE_HEADER_DEFENSE"),
                         LocaleManager.getMessage("TABLE_HEADER_SPEED")
@@ -60,7 +60,7 @@ public class TableCreator {
                         LocaleManager.getMessage("TABLE_HEADER_LEVEL"),
                         LocaleManager.getMessage("TABLE_HEADER_HEIGHT"),
                         LocaleManager.getMessage("TABLE_HEADER_WEIGHT"),
-                        LocaleManager.getMessage("TABLE_HEADER_HP"),
+                        "HP",
                         LocaleManager.getMessage("TABLE_HEADER_ATTACK"),
                         LocaleManager.getMessage("TABLE_HEADER_DEFENSE"),
                         LocaleManager.getMessage("TABLE_HEADER_SPEED")
@@ -91,7 +91,6 @@ public class TableCreator {
 
         List<String> headers = Stream.of(
                 LocaleManager.getMessage("TABLE_HEADER_NUMBER"),
-                LocaleManager.getMessage("TABLE_HEADER_ID"),
                 LocaleManager.getMessage("TABLE_HEADER_NAME"),
                 LocaleManager.getMessage("TABLE_HEADER_DAMAGE"),
                 LocaleManager.getMessage("TABLE_HEADER_USAGES"),
@@ -105,7 +104,6 @@ public class TableCreator {
             i++;
             tablePrinter.addRow(Stream.of(
                     String.valueOf(i),
-                    String.valueOf(move.getId()),
                     move.getName(),
                     String.valueOf(move.getDamage()),
                     String.valueOf(move.getMaxUsages() - move.getUsages()) + "/" + String.valueOf(move.getMaxUsages()),
@@ -119,14 +117,13 @@ public class TableCreator {
 
     public static void printTeam(Team team) {
         List<String> headers = Stream.of(
-                LocaleManager.getMessage("TABLE_HEADER_ID"),
                 LocaleManager.getMessage("TABLE_HEADER_NAME"),
                 LocaleManager.getMessage("TABLE_HEADER_PRIMARY_TYPE"),
                 LocaleManager.getMessage("TABLE_HEADER_SECONDARY_TYPE"),
                 LocaleManager.getMessage("TABLE_HEADER_LEVEL"),
                 LocaleManager.getMessage("TABLE_HEADER_HEIGHT"),
                 LocaleManager.getMessage("TABLE_HEADER_WEIGHT"),
-                LocaleManager.getMessage("TABLE_HEADER_HP"),
+                "HP",
                 LocaleManager.getMessage("TABLE_HEADER_ATTACK"),
                 LocaleManager.getMessage("TABLE_HEADER_DEFENSE"),
                 LocaleManager.getMessage("TABLE_HEADER_SPEED"),
@@ -135,9 +132,8 @@ public class TableCreator {
         TablePrinter tablePrinter = new TablePrinter(headers);
 
         for (Palmon palmon : team.getPalmons()) {
-            String defeated = palmon.isDefeated() ? LocaleManager.getMessage("TABLE_IS_DEFEATED_YES") : LocaleManager.getMessage("TABLE_IS_DEFEATED_NO");
+            String defeated = palmon.isDefeated() ? LocaleManager.getMessage("GENERAL_YES") : LocaleManager.getMessage("GENERAL_NO");
             tablePrinter.addRow(Stream.of(
-                    String.valueOf(palmon.getId()),
                     palmon.getName(),
                     palmon.getPrimaryType(),
                     palmon.getSecondaryType(),
